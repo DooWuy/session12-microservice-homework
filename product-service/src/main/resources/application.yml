@@ -1,0 +1,62 @@
+spring:
+    application:
+        name: product-service
+
+server:
+    port: 8080
+
+spring:
+    # Cấu hình Database ảo H2
+    datasource:
+        url: postgresql://localhost:5432/productdb
+        driverClassName: org.postgresql.Driver
+        username: postgres
+        password: password
+    h2:
+        console:
+            enabled: true # Vào http://localhost:8080/h2-console để xem DB nếu cần
+    jpa:
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+
+    # Cấu hình Redis
+    data:
+        redis:
+            host: localhost
+            port: 6379
+
+spring:
+    kafka:
+        bootstrap-servers: localhost:9092
+        producer:
+            key-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+        consumer:
+            bootstrap-servers: localhost:9092
+            group-id: product-service-group
+            key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+            properties:
+                spring.json.trusted.packages: "*"
+
+kafka:
+    topic:
+        orders: order-events
+
+spring:
+    data:
+        redis:
+            host: localhost
+            port: 6379
+            database: 0
+            timeout: 2000
+
+redisson:
+    config: classpath:redisson.yam
+
+lock:
+    product:
+        timeout: 5000      # Thời gian chờ để giành khóa (5 giây)
+        lease-time: 10000
